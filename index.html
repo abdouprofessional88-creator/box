@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صندوق التخلص من الطاقة السلبية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6C63FF;
+            --primary-dark: #5A52D5;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --gold: #FFD93D;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-6: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            direction: rtl;
+        }
+
+        /* Particle Canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .splash-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 30px;
+            animation: splashPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 60px rgba(108, 99, 255, 0.5);
+        }
+
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .splash-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .splash-loader {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .splash-loader-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 2px;
+            animation: loadBar 2s ease-in-out forwards;
+        }
+
+        @keyframes loadBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: none;
+        }
+
+        .main-content.visible {
+            display: block;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 50px 20px 30px;
+            position: relative;
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: rgba(108, 99, 255, 0.15);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            animation: fadeInUp 0.6s ease 0.4s both;
+        }
+
+        .header h1 .highlight {
+            background: var(--gradient-5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: clamp(16px, 3vw, 22px);
+            color: rgba(255,255,255,0.6);
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s ease 0.6s both;
+        }
+
+        /* Celebration Section */
+        .celebration-section {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeInUp 0.6s ease 0.8s both;
+        }
+
+        .celebration-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-5);
+        }
+
+        .celebration-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounceIn 0.8s ease 1s both;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .celebration-card h2 {
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 800;
+            margin-bottom: 15px;
+            animation: fadeInUp 0.6s ease 1.2s both;
+        }
+
+        .celebration-card p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+            animation: fadeInUp 0.6s ease 1.4s both;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 30%; right: 15%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { bottom: 25%; left: 20%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { bottom: 35%; right: 10%; animation-delay: 1.5s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Cards Section */
+        .cards-section {
+            padding: 30px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .card:active {
+            transform: scale(0.97);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-1::before { background: var(--gradient-3); }
+        .card-2::before { background: var(--gradient-4); }
+        .card-3::before { background: var(--gradient-5); }
+
+        .card-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin: 0 auto 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-1 .card-icon { background: rgba(79, 172, 254, 0.15); }
+        .card-2 .card-icon { background: rgba(67, 233, 123, 0.15); }
+        .card-3 .card-icon { background: rgba(250, 112, 154, 0.15); }
+
+        .card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+        }
+
+        .card-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--darker);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            max-width: 550px;
+            width: 100%;
+            padding: 50px 40px;
+            position: relative;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounceIn 0.5s ease;
+        }
+
+        .modal h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .modal-content {
+            font-size: 17px;
+            color: rgba(255,255,255,0.75);
+            line-height: 2;
+            margin-bottom: 30px;
+        }
+
+        .modal-content.center {
+            text-align: center;
+        }
+
+        .modal-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .tag-challenge {
+            background: rgba(79, 172, 254, 0.15);
+            color: #4facfe;
+        }
+
+        .tag-wisdom {
+            background: rgba(67, 233, 123, 0.15);
+            color: #43e97b;
+        }
+
+        .tag-story {
+            background: rgba(250, 112, 154, 0.15);
+            color: #fa709a;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 14px;
+        }
+
+        .footer .heart {
+            color: var(--secondary);
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Sound Toggle */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(108, 99, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--darker);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 30px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            z-index: 3000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .celebration-card {
+                padding: 35px 25px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                padding: 40px 25px;
+            }
+
+            .header {
+                padding: 40px 15px 20px;
+            }
+        }
+
+        /* Glow effect */
+        .glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .glow-1 { top: -100px; right: -100px; }
+        .glow-2 { bottom: -100px; left: -100px; }
+
+        /* Team Section */
+        .team-section {
+            padding: 40px 20px 50px;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s ease 1.6s both;
+        }
+
+        .team-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .team-title span {
+            background: var(--gradient-6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .team-member {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-member::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .team-member:hover::before {
+            opacity: 1;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .team-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 15px;
+            background: rgba(161, 140, 209, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover .team-avatar {
+            transform: scale(1.1);
+        }
+
+        .team-name {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Animated border */
+        .animated-border {
+            position: relative;
+        }
+
+        .animated-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 30px;
+            padding: 1px;
+            background: linear-gradient(45deg, #6C63FF, #FF6B6B, #4ECDC4, #FFD93D);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .animated-border:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* New Features Grid */
+        .new-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+
+        .feature-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .feature-box-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-box h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-box p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Lucky Card */
+        .lucky-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .lucky-card {
+            width: 80px;
+            height: 110px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .lucky-card::before {
+            content: '?';
+            font-size: 32px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .lucky-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .lucky-card:active {
+            transform: scale(0.95);
+        }
+
+        .lucky-card.flipped {
+            width: 250px;
+            height: auto;
+            min-height: 150px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            flex-direction: column;
+            padding: 20px;
+            cursor: default;
+        }
+
+        .lucky-card.flipped::before {
+            content: none;
+        }
+
+        .lucky-card-flipped-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .lucky-card-flipped-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .lucky-card-flipped-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FFD93D;
+        }
+
+        /* Name Generator */
+        .name-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .name-input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .name-input:focus {
+            border-color: var(--primary);
+        }
+
+        .name-input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .name-result {
+            margin-top: 15px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: none;
+        }
+
+        .name-result.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .name-result-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: var(--gradient-5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .name-result-msg {
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+        }
+
+        /* Positive Message */
+        .positive-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s ease;
+            direction: rtl;
+        }
+
+        .positive-textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .positive-textarea::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .saved-messages {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .saved-message {
+            padding: 12px 16px;
+            background: rgba(67, 233, 123, 0.08);
+            border: 1px solid rgba(67, 233, 123, 0.15);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        /* Stats Counter */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            padding: 18px 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 900;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 4px;
+        }
+
+        /* Daily Calendar */
+        .daily-word-box {
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+            border: 1px solid rgba(250, 112, 154, 0.2);
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .daily-word-date {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 10px;
+        }
+
+        .daily-word-icon {
+            font-size: 50px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .daily-word-text {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .daily-word-author {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .feature-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-purple {
+            background: var(--gradient-1);
+            color: #fff;
+        }
+
+        .btn-green {
+            background: var(--gradient-4);
+            color: #fff;
+        }
+
+        .btn-pink {
+            background: var(--gradient-5);
+            color: #fff;
+        }
+
+        .btn-blue {
+            background: var(--gradient-3);
+            color: #fff;
+        }
+
+        .reset-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(255,107,107,0.15);
+            border: 1px solid rgba(255,107,107,0.2);
+            border-radius: 10px;
+            color: #FF6B6B;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255,107,107,0.25);
+        }
+
+        /* ============ SCROLL ANIMATIONS ============ */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .scroll-reveal-left {
+            opacity: 0;
+            transform: translateX(80px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        .scroll-reveal-right {
+            opacity: 0;
+            transform: translateX(-80px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        .scroll-zoom {
+            opacity: 0;
+            transform: scale(0.7);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-zoom.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ============ SECTION DIVIDERS ============ */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.3), rgba(78, 205, 196, 0.3), transparent);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        /* ============ FLOATING ELEMENTS ============ */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.03;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 10%;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            top: 60%;
+            left: -80px;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--gold);
+            bottom: 10%;
+            right: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(15px, 15px) scale(1.02); }
+        }
+
+        /* ============ SMOOTH SCROLL ============ */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Floating Shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" id="soundToggle" title="تشغيل/إيقاف الصوت">
+        <span id="soundIcon">🔊</span>
+    </button>
+
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-icon">📦</div>
+        <div class="splash-text">جاري التحميل...</div>
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="header scroll-reveal">
+            <div class="header-badge">✨ صندوق الطاقة الإيجابية</div>
+            <h1>
+                مبروك! لقد تخلصت من
+                <br>
+                <span class="highlight">الطاقة السلبية</span>
+            </h1>
+            <p>كل ما كتبته ورماه في الصندوق أصبح من الماضي. الآن حان وقت البسمة والإيجابية!</p>
+        </header>
+
+        <!-- Celebration Card -->
+        <section class="celebration-section scroll-zoom">
+            <div class="celebration-card animated-border">
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="celebration-icon">🎉</div>
+                <h2>أحسنت! أنت بطل</h2>
+                <p>
+                    لقد قمت بخطوة شجاعة بإلقاء كل الأفكار السلبية في الصندوق.
+                    الآن أنت حر من كل تلك الطاقة. استمر في التفكير الإيجابي
+                    ودع الأمل يملأ قلبك كل يوم!
+                </p>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Action Cards -->
+        <section class="cards-section">
+            <div class="cards-grid">
+                <div class="card card-1 scroll-reveal-left" onclick="openModal('challenge')" data-delay="0">
+                    <div class="card-icon">🏆</div>
+                    <h3>تحدي إيجابي</h3>
+                    <p>اختر تحدياً عشوائياً يساعدك على تحسين مزاجك وزيادة حماسك</p>
+                </div>
+
+                <div class="card card-2 scroll-reveal" onclick="openModal('wisdom')" data-delay="100">
+                    <div class="card-icon">💡</div>
+                    <h3>حكمة اليوم</h3>
+                    <p>اقرأ حكمة أو مقولة ملهمة تجعلك تفكر بشكل أكثر إيجابية</p>
+                </div>
+
+                <div class="card card-3 scroll-reveal-right" onclick="openModal('story')" data-delay="200">
+                    <div class="card-icon">📖</div>
+                    <h3>قصة ملهمة</h3>
+                    <p>قصة قصيرة تحمل في طياتها عمقاً يغير نظرتك للأمور</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- New Features -->
+        <section class="new-features-grid">
+
+            <!-- Lucky Card Pull -->
+            <div class="feature-box scroll-reveal-left">
+                <span class="feature-box-icon">🍀</span>
+                <h3>اسحب ورقة حظ</h3>
+                <p>اختر ورقة من 30 ورقة حظ وكل ورقة فيها كلمة إيجابية مفاجئة</p>
+                <div id="luckyCardsContainer" class="lucky-cards-container"></div>
+                <div id="luckyCardResult" class="lucky-card-flipped-text" style="display:none; margin-top:15px;"></div>
+                <button class="feature-btn btn-purple" onclick="resetLuckyCards()" style="margin-top:15px;">🔄 أعد الورق</button>
+            </div>
+
+            <!-- Name Generator -->
+            <!-- Name Generator -->
+            <div class="feature-box scroll-reveal">
+                <span class="feature-box-icon">✨</span>
+                <h3>رسالة باسمك</h3>
+                <p>اكتب اسمك وسنشرح لك شخصيتك ومميزاتك</p>
+                <div class="name-input-group">
+                    <input type="text" class="name-input" id="nameInput" placeholder="اكتب اسمك هنا...">
+                    <button class="feature-btn btn-green" onclick="generateNameMessage()">اكتشف</button>
+                </div>
+                <div class="name-result" id="nameResult">
+                    <div class="name-result-name" id="nameResultName"></div>
+                    <div class="name-result-msg" id="nameResultMsg"></div>
+                </div>
+            </div>
+
+            <!-- Positive Message -->
+            <div class="feature-box scroll-reveal-right">
+                <span class="feature-box-icon">💌</span>
+                <h3>اكتب رسالة إيجابية</h3>
+                <p>اكتب رسالة حلوة أو نصيحة تساعد الآخرين</p>
+                <textarea class="positive-textarea" id="positiveMsg" placeholder="اكتب رسالة إيجابية هنا..."></textarea>
+                <button class="feature-btn btn-pink" onclick="savePositiveMessage()" style="margin-top:12px;">💾 احفظ الرسالة</button>
+                <div class="saved-messages" id="savedMessages"></div>
+            </div>
+
+            <!-- Stats Counter -->
+            <div class="feature-box scroll-zoom">
+                <span class="feature-box-icon">📊</span>
+                <h3>إنجازاتك</h3>
+                <p>تتبع تقدمك وانجازاتك في رحلة الطاقة الإيجابية</p>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="statChallenges">0</div>
+                        <div class="stat-label">تحدي مكتمل</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statWisdoms">0</div>
+                        <div class="stat-label">حكمة مقروءة</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statStories">0</div>
+                        <div class="stat-label">قصة مقروءة</div>
+                    </div>
+                </div>
+                <button class="reset-btn" onclick="resetStats()">🗑️ مسح الإحصائيات</button>
+            </div>
+
+            <!-- Daily Calendar -->
+            <div class="feature-box scroll-reveal" style="grid-column: 1 / -1; max-width: 500px; margin: 0 auto;">
+                <span class="feature-box-icon">📅</span>
+                <h3>كلمة اليوم</h3>
+                <p>كل يوم لك كلمة مختلفة تبدأ بها يومك</p>
+                <div class="daily-word-box">
+                    <div class="daily-word-date" id="dailyDate"></div>
+                    <span class="daily-word-icon" id="dailyIcon"></span>
+                    <div class="daily-word-text" id="dailyText"></div>
+                    <div class="daily-word-author" id="dailyAuthor"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section scroll-reveal">
+            <h2 class="team-title">فريق العمل <span>القائم على المشروع</span></h2>
+            <div class="team-grid">
+                <div class="team-member scroll-reveal-left">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">عبد النور السموني</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+                <div class="team-member scroll-reveal">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">أسماء الحداوي</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+                <div class="team-member scroll-reveal-right">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">آية لهوى</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+                <div class="team-member scroll-reveal-left">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">إيمان العوجي</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+                <div class="team-member scroll-reveal">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">أشرف أكناوي</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+                <div class="team-member scroll-reveal-right">
+                    <div class="team-avatar">👤</div>
+                    <div class="team-name">أيمن خلفاوي</div>
+                    <div class="team-role">عضو في الفريق</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>صُنع بكل <span class="heart">❤️</span> لطلابنا الأعزاء</p>
+            <p style="margin-top: 8px; opacity: 0.5;">صندوق التخلص من الطاقة السلبية</p>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============ DATA ============
+        const challenges = [
+            { title: "ابتسامة لـ 5 أشخاص", text: "ابتسم اليوم لـ 5 أشخاص مختلفين. الابتسامة تُعدّ مُعدية وهي أفضل هدية مجانية يمكنك تقديمها للآخرين. ستلاحظ كيف يتغير مزاجك بمجرد أن ترى ابتسامة الآخرين ردًا على ابتسامتك.", icon: "😊" },
+            { title: "امشِ 10 دقائق", text: "قم بالمشي لمدة 10 دقائق الآن. المشي يحفز إفراز هرمون السيروتونين الذي يُعرف بهرمون السعادة. استمّن بالطبيعة حولك واستنشق الهواء النقي.", icon: "🚶" },
+            { title: "اكتب 3 أشياء أنت ممتن لها", text: "الآن، خذ ورقة وقلم واكتب 3 أشياء أنت ممتن لها في حياتك. GRATITUDE هو مفتاح السعادة الحقيقية. حتى الأشياء البسيطة تستحق الامتنان.", icon: "✍️" },
+            { title: "اتصل بصديق", text: "اتصل الآن بصديق عزيز عليك haven't you spoken to lately. المحادثة الجيدة مع صديق ترفع من مستوى السعادة وتقلل الشعور بالوحدة.", icon: "📞" },
+            { title: "رقص على أغنية مفضلة", text: "شغّل أغنتك المفضلة الآن وارقص لمدة 3 دقائق! لا تهتم بالكلمات، المهم هو الحركة والطاقة. ستشعر بفرق كبير في مزاجك.", icon: "💃" },
+            { title: "اشرب كوب ماء وتأمل", text: "اشرب كوب ماء ببطء وتمعّن في كل رشفة. التأمل البسيط يساعد على تهدئة الأعصاب وتقليل التوتر. أنت تستحق الراحة.", icon: "🥤" },
+            { title: "أرسل رسالة شكر", text: "أرسل رسالة شكر أو تقدير لأحد الأشخاص الذين أثّروا في حياتك إيجابياً. كلمة الشكر تُحدث فرقاً كبيراً في حياة الآخرين وحياتك.", icon: "💌" },
+            { title: "تعلم شيئاً جديداً", text: "اقرأ مقالاً قصيراً أو شاهد فيديو تعليمياً عن موضوع لم تكن تعرفه من قبل. التعلم المستمر يبقي عقلك نشيطاً ويفتح آفاقاً جديدة.", icon: "📚" },
+            { title: "نظّف مكانك", text: "أحضر 5 دقائق ونظّف مكانك أو مكتبك. الفراغ والنظافة تقلل من التوتر وتزيد من الإنتاجية. ستبدأ شعوراً بالانجاز والخفة.", icon: "🧹" },
+            { title: "اكتب رسالة لنفسك", text: "اكتب رسالة تحفيزية لنفسك. اذكر فيها أهدافك وأحلامك وأسباب تفخر بها. أعد قراءتها كلما شعرت بالحاجة إلى دفعة معنوية.", icon: "📝" },
+            { title: "实践活动 عطاء", text: "افعل اليوم عملاً صغيراً لشخص آخر دون مقابل. العطاء يُشعرك بالسعادة والقيمة. حتى التفاصيل الصغيرة في العطاء تُحدث أثراً كبيراً.", icon: "🎁" },
+            { title: "اكتب أهدافك للسنة", text: "اكتب 3 أهداف تريد تحقيقها خلال السنة القادمة. الوضوح في الأهداف يمنحك السكينة والتركيز. ابدأ بخطوات صغيرة كل يوم.", icon: "🎯" },
+        ];
+
+        const wisdoms = [
+            { title: "السعادةاختيار", text: "السعادة ليست وجهة نصل إليها، بل هي رحلة نعيشها كل يوم. اختر أن تكون سعيداً الآن، لا تنتظر الظروف لتتغير. السعادة بداخلك، فقط ابحث عنها.", icon: "🌟" },
+            { title: "القوة الحقيقية", text: "القوة الحقيقية ليست في عدم السقوط، بل في النهوض في كل مرة تسقط فيها. كل مرة تنهض فيها أقوى من قبل، تصبح أكثر مقاومة للصعاب.", icon: "💪" },
+            { title: "التفكير الإيجابي", text: "فكر في الأشياء الجيدة التي تملكها، لا في الأشياء التي تفتقدها. الامتنان يحوّل ما يكفي إلى أكثر من كفاية، ويحوّل الأماكن المظلمة إلى ضوء.", icon: "☀️" },
+            { title: "الوقت الثمين", text: "لا تضيع وقتك في التفكير بالماضي الذي لا يمكنك تغييره. ركّز على الحاضر الذي يمكنك تشكيله، واكتب المستقبل الذي تريده.", icon: "⏰" },
+            { title: "الثقة بالنفس", text: "أنت أقوى مما تتخيل، وأكثر قدرة مما تتصور، وأفضل مما تعتقد. لا تدع أحداً يُقلّل من قيمتك أو يُخفي نورك. أنت مميز بطريقتك.", icon: "🔥" },
+            { title: "التعامل مع الفشل", text: "الفشل ليس النهاية، بل هو البداية الحقيقية للنجاح. كل فشل يحمل في طياته درساً ن有价值اً. اسأل نفسك: ماذا تعلّمت؟ وكيف يمكنني التطور؟", icon: "🌱" },
+            { title: "السلام الداخلي", text: "لا تبحث عن السلم في العالم الخارجي. السلام الحقيقي يبدأ من الداخل. استمع إلى صوتك الداخلي، واعتنِ بصحتك النفسية كما تعتنئ بصحتك الجسدية.", icon: "🕊️" },
+            { title: "المقارنة القاتلة", text: "لا تقارن حياتك بحياة الآخرين. أنت لا تعرف قصتهم الكاملة. قارن نفسك فقط بنفسك بالأمس. التقدم البطيء تقدم لا تتوقف عنه أبداً.", icon: "🦋" },
+            { title: "الرحلة أجمل", text: "لا تتعجل النتائج. كل لحظة في رحلتك لها معنى. الاستمتاع بالرحلة أهم من الوصول للوجهة. تعلّم أن تحب كل مرحلة من مراحل حياتك.", icon: "🛤️" },
+            { title: "التغيير يبدأ منك", text: "إذا أردت أن يتغير العالم، ابدأ بنفسك أولاً. التغيير الصغير الذي تقوم به اليوم سيُحدث فرقاً كبيراً في غد. لا تنتظر الظروف المثالية.", icon: "🌍" },
+            { title: "السلام عليكم", text: "اللهم صلِّ وسلم على نبينا محمد. ذكر الله يملأ القلب سكينة وطمأنينة. الحمد لله على كل حال، والله خير حافظاً وأرحم الراحمين.", icon: "🤲" },
+            { title: "الأمل دائماً موجود", text: "مهما اشتدت الليلة، فالصبح آتٍ. الأمل لا يختفي أبداً، بل نحن من ننسى أن نبحث عنه. تذكّر أن كل صعوبة تليها يسراً بإذن الله.", icon: "🌅" },
+        ];
+
+        const stories = [
+            { title: "الصبر والمثابرة", text: "في قرية صغيرة، كان هناك فتى فقيراً يُدعى أحمد. كان أحمد يحلم بأن يصبح طبيباً، لكن ظروفه المالية لم تكن تسمح له. كان يمشي كل يوم مسافة 10 كيلومترات إلى المدرسة، ويقرأ الكتب تحت ضوء الشمع في الليل. سخر منه زملاؤه ويأس منه كثيرون. لكن أحمد لم يستسلم. بعد سنوات من الكفاح والصبر، تخرج أحمد من كلية الطب بتقدير امتياز. اليوم، هو طبيب ناجح يُعالج الناس مجاناً في قريته. القصة تُعلمنا أن: الصبر مفتاح الفرج، وأن الأحلام لا تتحقق بالكلام بل بالأفعال.", icon: "📚" },
+            { title: "حكمة السمكة", text: "جلس طفل على ضفاف النهر يُلقي بالحصوات في الماء. مرّ به رجل عجوز فسأله: لماذا تُلقي الحصوات؟ فأجاب الطفل: أُحب أن أرى الدوائر التي تُحدثها في الماء. فقال العجوز: كل حجر تُلقيه في حياتك يُحدث أثراً، سواء كان طيباً أو سيئاً. فاجعل كل حجر تُلقيه يُحدث دوائر من الخير والفرح حولك. رحّل الطفل وفهم أن أفعاله الصغيرة لها تأثير كبير على الآخرين.", icon: "🐟" },
+            { title: "الشجرة والرياح", text: "كانت هناك شجرة كبيرة في أعلى تل. كانت الرياح العاتية تُzarّب بها كل يوم. يوماً ما، انكسر جزء من أغصانها. لكنها بقيت واقفة لأن جذورها كانت عميقة في الأرض. قال لها النسر: لماذا لا تهربي من الرياح؟ فأجابت: لو هربت من الرياح، لما أصبحت قوية كما أنا اليوم. القصة تُعلمنا أن الصعاب تصنع منا أشخاصاً أقوى، وأن مواجهة التحديات أفضل من الهروب منها.", icon: "🌳" },
+            { title: "ال匠心 والمعلم", text: "كان هناك نحّات ماهر صنع تمثالاً جميلاً من الحجر. سأله أحد الناس: كيف صنعت هذا الجمال من هذا الحجر القبيح؟ فأجاب النحّات: أنا لا أرى الحجر القبيح، بل أرى التمثال الجميل الذي بداخله وأنا أُظهره. هكذا هي الحياة: لا ترى العيوب في الآخرين، بل ابحث عن الجمال الذي بداخلهم وأظهره.", icon: "🎭" },
+            { title: "النحلة والعنكبوت", text: "كانت نحلة تعمل بجد ونشاط كل يوم تجمع العسل. عنكبوت يجلس في زاوية قال لها: لماذا تتعبين نفسك كل يوم؟ أنا أجلس في زاويتي وأنتظر الطعام يأتي إلي. النحلة أجابت: لأن العمل الجاد يُثمر دائماً، بينما الانتظار يضيع الوقت. بعد أشهر، كان العنكبوت لا يزال في زاويته بلا طعام، بينما كانت النحلة قد ملأت خلاياها بالعسل. العمل والاستمرارية مفتاح النجاح في الحياة.", icon: "🐝" },
+            { title: "الفلاح والحبة", text: "زرع فلاح حبة قمح في أرضه. كان يسقيها كل يوم ويُنظف الحشائش من حولها. مرّ جاره وقال له: لماذا تتعب نفسك لحبة واحدة؟ فأجاب الفلاح: لأن كل شيء عظيم بدأ من شيء صغير. بعد أشهر، نما من تلك الحبة ساقٌ أ Produces مئات الحبات. القصة تُعلمنا أن الأفعال الصغيرة المستمرة تُنتج نتائج كبيرة.", icon: "🌾" },
+        ];
+
+        // ============ SOUND SYSTEM ============
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'click':
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.type = 'sine';
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.1);
+                    break;
+                case 'open':
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.type = 'sine';
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.2);
+                    break;
+                case 'close':
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.type = 'sine';
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.15);
+                    break;
+                case 'success':
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.12);
+                        g.gain.setValueAtTime(0.25, audioCtx.currentTime + i * 0.12);
+                        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.3);
+                        o.type = 'sine';
+                        o.start(audioCtx.currentTime + i * 0.12);
+                        o.stop(audioCtx.currentTime + i * 0.12 + 0.3);
+                    });
+                    break;
+                case 'new':
+                    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.2);
+                    osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.type = 'triangle';
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.4);
+                    break;
+                case 'pop':
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.type = 'sine';
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.08);
+                    break;
+            }
+        }
+
+        // ============ SOUND TOGGLE ============
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+            this.classList.toggle('muted', !soundEnabled);
+            if (soundEnabled) playSound('pop');
+        });
+
+        // ============ PARTICLES ============
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const pCtx = particlesCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeParticles() {
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
+        }
+
+        resizeParticles();
+        window.addEventListener('resize', resizeParticles);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * particlesCanvas.width;
+                this.y = particlesCanvas.height + Math.random() * 100;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = -(Math.random() * 1 + 0.5);
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = ['#6C63FF', '#FF6B6B', '#4ECDC4', '#FFD93D'][Math.floor(Math.random() * 4)];
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.opacity -= 0.002;
+                if (this.y < -10 || this.opacity <= 0) this.reset();
+            }
+            draw() {
+                pCtx.save();
+                pCtx.globalAlpha = this.opacity;
+                pCtx.fillStyle = this.color;
+                pCtx.beginPath();
+                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pCtx.fill();
+                pCtx.restore();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) {
+            const p = new Particle();
+            p.y = Math.random() * particlesCanvas.height;
+            particles.push(p);
+        }
+
+        function animateParticles() {
+            pCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ============ CONFETTI ============
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const cCtx = confettiCanvas.getContext('2d');
+        let confettiPieces = [];
+        let confettiActive = false;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        resizeConfetti();
+        window.addEventListener('resize', resizeConfetti);
+
+        class ConfettiPiece {
+            constructor() {
+                this.x = Math.random() * confettiCanvas.width;
+                this.y = -20;
+                this.width = Math.random() * 10 + 5;
+                this.height = Math.random() * 6 + 3;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = (Math.random() - 0.5) * 4;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 10;
+                this.color = ['#6C63FF', '#FF6B6B', '#4ECDC4', '#FFD93D', '#f093fb', '#4facfe'][Math.floor(Math.random() * 6)];
+                this.opacity = 1;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                this.opacity -= 0.003;
+                this.speedY += 0.02;
+            }
+            draw() {
+                cCtx.save();
+                cCtx.translate(this.x, this.y);
+                cCtx.rotate(this.rotation * Math.PI / 180);
+                cCtx.globalAlpha = this.opacity;
+                cCtx.fillStyle = this.color;
+                cCtx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+                cCtx.restore();
+            }
+        }
+
+        function launchConfetti() {
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push(new ConfettiPiece());
+            }
+            if (!confettiActive) {
+                confettiActive = true;
+                animateConfetti();
+            }
+        }
+
+        function animateConfetti() {
+            cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiPieces.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            confettiPieces = confettiPieces.filter(p => p.opacity > 0 && p.y < confettiCanvas.height + 50);
+            if (confettiPieces.length > 0) {
+                requestAnimationFrame(animateConfetti);
+            } else {
+                confettiActive = false;
+            }
+        }
+
+        // ============ CARD ANIMATIONS ============
+        function showCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, parseInt(card.dataset.delay) + 200);
+            });
+        }
+
+        // ============ RIPPLE EFFECT ============
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('div');
+                ripple.className = 'card-ripple';
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // ============ MODAL SYSTEM ============
+        let currentType = null;
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function openModal(type) {
+            currentType = type;
+            playSound('open');
+
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+
+            let item, tagClass, tagText, btnText;
+
+            switch(type) {
+                case 'challenge':
+                    item = getRandomItem(challenges);
+                    tagClass = 'tag-challenge';
+                    tagText = '🏆 تحدي إيجابي';
+                    btnText = '🔄 تحدي جديد';
+                    incrementStat('challenges');
+                    break;
+                case 'wisdom':
+                    item = getRandomItem(wisdoms);
+                    tagClass = 'tag-wisdom';
+                    tagText = '💡 حكمة اليوم';
+                    btnText = '🔄 حكمة جديدة';
+                    incrementStat('wisdoms');
+                    break;
+                case 'story':
+                    item = getRandomItem(stories);
+                    tagClass = 'tag-story';
+                    tagText = '📖 قصة ملهمة';
+                    btnText = '🔄 قصة جديدة';
+                    incrementStat('stories');
+                    break;
+            }
+
+            body.innerHTML = `
+                <span class="modal-icon">${item.icon}</span>
+                <span class="modal-tag ${tagClass}">${tagText}</span>
+                <h2>${item.title}</h2>
+                <div class="modal-content">${item.text}</div>
+                <button class="modal-btn btn-primary" onclick="refreshModal()">
+                    ${btnText}
+                </button>
+                <button class="modal-btn btn-secondary" onclick="closeModal()">
+                    ✨ شكراً لك
+                </button>
+            `;
+
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                playSound('success');
+                launchConfetti();
+            }, 300);
+        }
+
+        function refreshModal() {
+            playSound('new');
+            const body = document.getElementById('modalBody');
+
+            let item, tagClass, tagText, btnText;
+
+            switch(currentType) {
+                case 'challenge':
+                    item = getRandomItem(challenges);
+                    tagClass = 'tag-challenge';
+                    tagText = '🏆 تحدي إيجابي';
+                    btnText = '🔄 تحدي جديد';
+                    incrementStat('challenges');
+                    break;
+                case 'wisdom':
+                    item = getRandomItem(wisdoms);
+                    tagClass = 'tag-wisdom';
+                    tagText = '💡 حكمة اليوم';
+                    btnText = '🔄 حكمة جديدة';
+                    incrementStat('wisdoms');
+                    break;
+                case 'story':
+                    item = getRandomItem(stories);
+                    tagClass = 'tag-story';
+                    tagText = '📖 قصة ملهمة';
+                    btnText = '🔄 قصة جديدة';
+                    incrementStat('stories');
+                    break;
+            }
+
+            body.style.opacity = '0';
+            body.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                body.innerHTML = `
+                    <span class="modal-icon">${item.icon}</span>
+                    <span class="modal-tag ${tagClass}">${tagText}</span>
+                    <h2>${item.title}</h2>
+                    <div class="modal-content">${item.text}</div>
+                    <button class="modal-btn btn-primary" onclick="refreshModal()">
+                        ${btnText}
+                    </button>
+                    <button class="modal-btn btn-secondary" onclick="closeModal()">
+                        ✨ شكراً لك
+                    </button>
+                `;
+                body.style.opacity = '1';
+                body.style.transform = 'translateY(0)';
+                body.style.transition = 'all 0.3s ease';
+
+                launchConfetti();
+            }, 200);
+        }
+
+        function closeModal(e) {
+            if (e && e.target !== e.currentTarget) return;
+            playSound('close');
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============ TOAST ============
+        function showToast(message, icon = '✨') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `${icon} ${message}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ============ LUCKY CARDS ============
+        const luckyMessages = [
+            { icon: "🌟", text: "أنت نجم يلمع في حياتك، لا تنسَ أنك مميز!" },
+            { icon: "💪", text: "أقوى مما تتخيل، استمر في التقدم!" },
+            { icon: "🌈", text: "بعد كل مطر، تأتي قوس قزح. الأمل دائماً موجود!" },
+            { icon: "🦋", text: "مثل الفراشة، التحول يصنع الجمال!" },
+            { icon: "☀️", text: "أنت شمس تنير حياة من حولك!" },
+            { icon: "🎯", text: "ركز على أهدافك، النجاح قريب بإذن الله!" },
+            { icon: "🌺", text: "مثل الزهرة، تحتاج المطر والشمس لتزهر!" },
+            { icon: "💎", text: "أنت كنز نادر، لا تقلل من قيمتك!" },
+            { icon: "🚀", text: " skies are the limit! لا حدود لأحلامك!" },
+            { icon: "🎵", text: " LIFE is a song، غنِّ لحياتك بكل حب!" },
+            { icon: "🔥", text: "النار التي فيك ستحرق كل العقبات!" },
+            { icon: "🌊", text: "مثل الأمواج، لا تتوقف عن المحاولة!" },
+            { icon: "🌸", text: "الصبر مفتاح الجمال، انتظر النتائج الرائعة!" },
+            { icon: "⭐", text: "أنت نجمة في سماء حياة الآخرين!" },
+            { icon: "🎨", text: "حياتك لوحة، ارسمها بأجمل الألوان!" },
+            { icon: "🕊️", text: "السلام يبدأ من القلب، ابدأ من الداخل!" },
+            { icon: "🌱", text: "مثل الشجرة، نموك يتطلب الصبر!" },
+            { icon: "🏆", text: "أنت بطل في كل يوم، واصل التميز!" },
+            { icon: "📚", text: "العلم نور، اقرأ وتعلّم كل يوم!" },
+            { icon: "💎", text: "مثل الألماس، الضغط يصنع الجمال!" },
+            { icon: "🌅", text: "كل يوم جديد فرصة جديدة، اغتنمها!" },
+            { icon: "🐝", text: "مثل النحلة، العمل الجاد يُثمر!" },
+            { icon: "🎯", text: "الدقة في التخطيط تحقق الأحلام!" },
+            { icon: "🌿", text: "الطبيعة تُعلمنا الجمال في البساطة!" },
+            { icon: "✨", text: "البريق بداخلك أكبر من أي شيء في الخارج!" },
+            { icon: "🎈", text: "اصعد عالياً، الأحلام لا تعرف المستحيل!" },
+            { icon: "🌈", text: "الألوان الجميلة تأتي من اختلاف التجارب!" },
+            { icon: "☀️", text: "الشمس لا تتوقف عن الظهور، وأنت كذلك!" },
+            { icon: "💫", text: "النجاح يبدأ بخطوة صغيرة، ابدأ الآن!" },
+            { icon: "🌻", text: "مثل دوار الشمس، ابحث عن الإيجابية دائماً!" },
+        ];
+
+        function createLuckyCards() {
+            const container = document.getElementById('luckyCardsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const card = document.createElement('div');
+                card.className = 'lucky-card';
+                card.style.animationDelay = (i * 0.05) + 's';
+                card.onclick = function() { flipCard(this, i); };
+                container.appendChild(card);
+            }
+        }
+
+        function flipCard(cardEl, index) {
+            if (cardEl.classList.contains('flipped')) return;
+            playSound('open');
+            const msg = luckyMessages[index];
+            cardEl.classList.add('flipped');
+            cardEl.innerHTML = `
+                <div class="lucky-card-flipped-icon">${msg.icon}</div>
+                <div class="lucky-card-flipped-title">ورقة حظ رقم ${index + 1}</div>
+                <div class="lucky-card-flipped-text">${msg.text}</div>
+            `;
+            launchConfetti();
+        }
+
+        function resetLuckyCards() {
+            playSound('new');
+            createLuckyCards();
+        }
+
+        // ============ NAME GENERATOR ============
+        const nameMessages = [
+            "أنت شخص طيب القلب ودود مع الجميع، الناس تحب الاقتراب منك لأنك تبث الطمأنينة والسعادة!",
+            "أنت شخص مبدع ومليء بال ideas الرائعة، عقلك لا يتوقف عن التفكير الإبداعي!",
+            "أنت شخص قوي وصبور، تتحمل الصعوبات وتنهض في كل مرة تسقط فيها!",
+            "أنت شخص محب للآخرين وتهتم بهم دائماً، تجعل من حولك يشعرون بالتقدير!",
+            "أنت شخص حنون ومرح، تملأ المكان فرحاً وابتسامات!",
+            "أنت شخص مخلص وصادق، كلمتك موثوقة وكل يثق بك!",
+            "أنت شخص طموح ومجتهد، تسعى دائماً للتطور والإنجاز!",
+            "أنت شخص ذكي وفطن، تفهم الأمور بسرعة وتinoحل المشاكل بسهولة!",
+            "أنت شخص كريم وسعيد بالآخرين، تفرح لنجاح غيرك وتougebiهم!",
+            "أنت شخص منظم ومسؤول، تعتمد عليه في كل شيء!",
+            "أنت شخص يحب الحياة ويستمتع بكل لحظة، نظرتك الإيجابية تُلهم الآخرين!",
+            "أنت شخص صاحب حلم كبير، ولا شيء يوقفك عن تحقيق أهدافك!",
+            "أنت شخص يتعلم من أخطائه ويتطور كل يوم، هذا يميزك عن غيرك!",
+            "أنت شخص محب للعلم والمعرفة، عقلك مثل الإسفنج يمتص المعلومة!",
+            "أنت شخص يهتم بالتفاصيل ويبدع في كل ما يفعله، الجودة سر نجاحك!",
+        ];
+
+        function generateNameMessage() {
+            const nameInput = document.getElementById('nameInput');
+            const name = nameInput.value.trim();
+            if (!name) {
+                showToast('اكتب اسمك أولاً', '⚠️');
+                return;
+            }
+            playSound('success');
+            const msg = getRandomItem(nameMessages);
+            document.getElementById('nameResultName').textContent = `أنت يا ${name}`;
+            document.getElementById('nameResultMsg').textContent = msg;
+            document.getElementById('nameResult').classList.add('show');
+            launchConfetti();
+        }
+
+        // ============ POSITIVE MESSAGES ============
+        function savePositiveMessage() {
+            const textarea = document.getElementById('positiveMsg');
+            const msg = textarea.value.trim();
+            if (!msg) {
+                showToast('اكتب رسالة أولاً', '⚠️');
+                return;
+            }
+            playSound('success');
+            const messages = JSON.parse(localStorage.getItem('positiveMessages') || '[]');
+            messages.unshift({ text: msg, date: new Date().toLocaleDateString('ar-SA') });
+            localStorage.setItem('positiveMessages', JSON.stringify(messages));
+            textarea.value = '';
+            loadSavedMessages();
+            showToast('تم حفظ رسالتك بنجاح!', '💌');
+            launchConfetti();
+        }
+
+        function loadSavedMessages() {
+            const container = document.getElementById('savedMessages');
+            const messages = JSON.parse(localStorage.getItem('positiveMessages') || '[]');
+            container.innerHTML = messages.slice(0, 5).map(m =>
+                `<div class="saved-message">💬 ${m.text} <span style="opacity:0.5;font-size:12px;">${m.date}</span></div>`
+            ).join('');
+        }
+
+        // ============ STATS ============
+        function getStats() {
+            return JSON.parse(localStorage.getItem('energyStats') || '{"challenges":0,"wisdoms":0,"stories":0}');
+        }
+
+        function incrementStat(type) {
+            const stats = getStats();
+            stats[type]++;
+            localStorage.setItem('energyStats', JSON.stringify(stats));
+            updateStatsUI();
+        }
+
+        function updateStatsUI() {
+            const stats = getStats();
+            document.getElementById('statChallenges').textContent = stats.challenges;
+            document.getElementById('statWisdoms').textContent = stats.wisdoms;
+            document.getElementById('statStories').textContent = stats.stories;
+        }
+
+        function resetStats() {
+            if (confirm('هل تريد مسح جميع الإحصائيات؟')) {
+                playSound('pop');
+                localStorage.removeItem('energyStats');
+                updateStatsUI();
+                showToast('تم مسح الإحصائيات', '🗑️');
+            }
+        }
+
+        // ============ DAILY CALENDAR ============
+        const dailyWords = [
+            { icon: "🌟", text: "الحياة أجمل مما تتخيّل، فقط افتح عينيك!", author: " اليوم هو يوم جديد" },
+            { icon: "💪", text: "لا تقل 'أستطيع'، بل قل 'سأحاول'، والمحاولة تُ_brings النجاح!", author: " الحافز اليومي" },
+            { icon: "🌈", text: "بعد كل صعوبة، يُكمن اليسار. تفوّق!", author: " البداية الحلوة" },
+            { icon: "🎯", text: "حدد هدفك وامشِ نحوه خطوة بخطوة!", author: " التخطيط الناجح" },
+            { icon: "☕", text: "خذ نفساً عميقاً واستمتع باللحظة الحالية!", author: " الهدوء الداخلي" },
+            { icon: "🌺", text: "ازدهر حيث أنت، ولا تنتظر الظروف المثالية!", author: " النمو الذاتي" },
+            { icon: "📚", text: "العلم يُفتح الأبواب المغلقة. اقرأ وتعلّم!", author: " المعرفة قوة" },
+            { icon: "😊", text: "الابتسامة أقصر طريق لقلب شخص آخر!", author: " فن الابتسام" },
+            { icon: "🌻", text: "اتبع النور وستجد الطريق دائماً!", author: " الإيجابية" },
+            { icon: "🎵", text: "اغنِ لحياتك ولا تهتم لمن لا يفهم أغنيتك!", author: " فن الحياة" },
+            { icon: "💎", text: "أنت كنز نادر، لا تقلل من قيمتك أبداً!", author: " القيمة الذاتية" },
+            { icon: "🕊️", text: "السلام يبدأ من داخلك. ابحث عنه!", author: " السكينة" },
+            { icon: "🔥", text: "الحماس هو سر كل إنجاز عظيم!", author: " الحماس" },
+            { icon: "🎨", text: "حياتك لوحة فنية، ارسمها بأجمل الألوان!", author: " الإبداع" },
+            { icon: "⚡", text: "أنت أقوى مما تتخيل، لا تدع أحداً يقول لك العكس!", author: " القوة الحقيقية" },
+            { icon: "🌟", text: "كل يوم تمر به هو فرصة جديدة لتكون أفضل!", author: " التطور" },
+            { icon: "🌊", text: "التغيير يبدأ منك، ابدأ الصغيرة وتكبر!", author: " بداية التغيير" },
+            { icon: "🏆", text: "النجاح ليس وجهة، بل رحلة تستمتع بها!", author: " رحلة النجاح" },
+            { icon: "🌈", text: "الألوان الجميلة تأتي من اختلاف التجارب!", author: " تنوع الحياة" },
+            { icon: "☀️", text: "أنت شمس في حياتك، لا تدع أحد يُخفي نورك!", author: " النور الداخلي" },
+            { icon: "💫", text: "حلم كبير، وابدأ صغير، واستمر دائماً!", author: " القاعدة الذهبية" },
+            { icon: "🐝", text: "العمل الجاد والمستمر يُحقق الأحلام!", author: " إلهام النحلة" },
+            { icon: "🌸", text: "الصبر يُحلّي كل شيء، انتظر النتائج الرائعة!", author: " فن الصبر" },
+            { icon: "🎯", text: "ركز على هدفك واحد، ولا تت分散!", author: " التركيز" },
+            { icon: "🌿", text: "النمو البطيء أفضل من الجمود. واصل التقدم!", author: " التطور المستمر" },
+            { icon: "✨", text: "البريق بداخلك أقوى من أي ظلام في الخارج!", author: ".Inner Light" },
+            { icon: "🎈", text: "اصعد عالياً، الأحلام لا تعرف المستحيل!", author: " الحلم الكبير" },
+            { icon: "☀️", text: "الشمس لا تتوقف عن الظهور، وأنت كذلك لا تتوقف!", author: " الاستمرارية" },
+            { icon: "💫", text: "النجاح يبدأ بخطوة واحدة. ابدأ الآن!", author: " البداية" },
+            { icon: "🌻", text: "مثل دوار الشمس، ابحث عن الإيجابية في كل شيء!", author: " فن الإيجابية" },
+        ];
+
+        function setDailyWord() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            const word = dailyWords[dayOfYear % dailyWords.length];
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dailyDate').textContent = today.toLocaleDateString('ar-SA', options);
+            document.getElementById('dailyIcon').textContent = word.icon;
+            document.getElementById('dailyText').textContent = word.text;
+            document.getElementById('dailyAuthor').textContent = word.author;
+        }
+
+        // ============ SCROLL REVEAL ANIMATIONS ============
+        function setupScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-zoom').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // ============ SUCCESS SOUND ON ENTRY ============
+        function playSuccessFanfare() {
+            if (!soundEnabled) return;
+            initAudio();
+
+            const notes = [
+                { freq: 523.25, time: 0, dur: 0.15 },    // C5
+                { freq: 659.25, time: 0.15, dur: 0.15 },  // E5
+                { freq: 783.99, time: 0.3, dur: 0.15 },   // G5
+                { freq: 1046.50, time: 0.45, dur: 0.4 },  // C6
+            ];
+
+            notes.forEach(n => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.setValueAtTime(n.freq, audioCtx.currentTime + n.time);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime + n.time);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + n.time + n.dur);
+                osc.type = 'sine';
+                osc.start(audioCtx.currentTime + n.time);
+                osc.stop(audioCtx.currentTime + n.time + n.dur);
+            });
+        }
+
+        // ============ SPLASH SCREEN ============
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splashScreen').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('visible');
+
+                setTimeout(() => {
+                    showCards();
+                    launchConfetti();
+                    createLuckyCards();
+                    loadSavedMessages();
+                    updateStatsUI();
+                    setDailyWord();
+                    setupScrollReveal();
+                    playSuccessFanfare();
+                    showToast('مرحباً بك! اختر تجربتك المفضلة', '👋');
+                }, 400);
+            }, 2500);
+        });
+
+        // ============ MOUSE GLOW FOLLOW ============
+        document.addEventListener('mousemove', (e) => {
+            const glows = document.querySelectorAll('.glow');
+            glows.forEach((glow, i) => {
+                const speed = i === 0 ? 0.03 : 0.02;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                glow.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
